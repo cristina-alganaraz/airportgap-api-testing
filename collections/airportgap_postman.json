@@ -1,0 +1,893 @@
+{
+	"info": {
+		"_postman_id": "35342603-43c4-4760-8fba-e99518c824b1",
+		"name": "Airport Gap API Tests",
+		"description": "Automatización de pruebas de la Airport Gap API, validando endpoints principales y manejo de autenticación con token. Incluye tests positivos y negativos.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "42869806"
+	},
+	"item": [
+		{
+			"name": "Autenticación",
+			"item": [
+				{
+					"name": "Login con credenciales válidas",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let jsonData = pm.response.json();\r",
+									"pm.environment.set(\"token\", jsonData.token);\r",
+									"\r",
+									"pm.test(\"Código de estado 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"La respuesta contiene token\", function() {\r",
+									"  pm.expect(jsonData.token).to.exist;\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"{{email}}\",\r\n  \"password\": \"{{password}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/tokens",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"tokens"
+							]
+						},
+						"description": "Verificar que la API devuelva el token al usar email y contraseña correctos."
+					},
+					"response": []
+				},
+				{
+					"name": "Login con credenciales inválidas",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Código de estado 401\", function () {\r",
+									"  pm.response.to.have.status(401);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Mensaje de error correcto\", function () {\r",
+									"  jsonData.errors.forEach(err => {\r",
+									"    pm.expect(err.status).to.eql(\"401\");\r",
+									"    pm.expect(err.title).to.eql(\"Unauthorized\");\r",
+									"    pm.expect(err.detail).to.eql(\"You are not authorized to perform the requested action.\");\r",
+									"  });\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"{{invalidEmail}}\",\r\n  \"password\": \"{{invalidPassword}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/tokens",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"tokens"
+							]
+						},
+						"description": "Verificar que la API devuelve error al usar email o contraseña incorrectos."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Aeropuertos",
+			"item": [
+				{
+					"name": "Listar todos los aeropuertos",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Código de estado 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"La lista de aeropuertos no está vacía\", function() {\r",
+									"  pm.expect(jsonData.data).to.be.an(\"array\").that.is.not.empty;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"El primer objeto es de tipo 'airport'\", function () {\r",
+									"  pm.expect(jsonData.data[0].type).to.eql(\"airport\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/airports",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"airports"
+							]
+						},
+						"description": "Verificar que la API devuelva todos los aeropuertos de la base de datos."
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar aeropuerto por ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let jsonData = pm.response.json();\r",
+									"let airportId = pm.collectionVariables.get(\"airportId\");\r",
+									"\r",
+									"pm.test(\"Código de estado 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"El aeropuerto tiene el id correcto\", function () {\r",
+									"    pm.expect(jsonData.data.id).to.eql(airportId);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/airports/{{airportId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"airports",
+								"{{airportId}}"
+							]
+						},
+						"description": "Verificar que la API devuelva el aeropuerto solicitado."
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar aeropuerto por ID inexistente",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Código de estado 404\", function () {\r",
+									"  pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Mensaje de error correcto\", function () {\r",
+									"  jsonData.errors.forEach(err => {\r",
+									"    pm.expect(err.status).to.eql(\"404\");\r",
+									"    pm.expect(err.title).to.eql(\"Not Found\");\r",
+									"    pm.expect(err.detail).to.eql(\"The page you requested could not be found\");\r",
+									"  });\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/airports/{{invalidAirportId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"airports",
+								"{{invalidAirportId}}"
+							]
+						},
+						"description": "Verificar que la API devuelve error al solicitar un aeropuerto inexistente."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Distancias",
+			"item": [
+				{
+					"name": "Calcular distancia entre aeropuertos",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let jsonData = pm.response.json();\r",
+									"let distanceKilometers = Number(pm.collectionVariables.get(\"distanceKilometers\"));\r",
+									"\r",
+									"pm.test(\"Código de estado 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"La repuesta es de tipo 'airport_distance'\", function () {\r",
+									"  pm.expect(jsonData.data.type).to.eql(\"airport_distance\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"La distancia es la correcta\", function() {\r",
+									"  pm.expect(jsonData.data.attributes.kilometers).to.eql(distanceKilometers);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"from\": \"{{from}}\",\r\n  \"to\": \"{{to}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/airports/distance",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"airports",
+								"distance"
+							]
+						},
+						"description": "Verificar que la API calcule la distancia entre dos aeropuertos y devuelva la distancia en millas, kilómetros o millas náuticas."
+					},
+					"response": []
+				},
+				{
+					"name": "Calcular distancia sin parámetros",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Código de estado 422\", function () {\r",
+									"  pm.response.to.have.status(422);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Mensaje de error correcto\", function () {\r",
+									"  jsonData.errors.forEach(err => {\r",
+									"    pm.expect(err.status).to.eql(\"422\");\r",
+									"    pm.expect(err.title).to.eql(\"Unable to process request\");\r",
+									"    pm.expect(err.detail).to.eql(\"Please enter valid 'from' and 'to' airports.\");\r",
+									"  });\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/airports/distance",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"airports",
+								"distance"
+							]
+						},
+						"description": "Verificar que la API devuelve error al no enviar los aeropuertos de origen y destino."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Favoritos",
+			"item": [
+				{
+					"name": "Agregar favorito",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let jsonData = pm.response.json();\r",
+									"pm.collectionVariables.set(\"favId\", jsonData.data.id);\r",
+									"\r",
+									"pm.test(\"Código de estado 201\", function () {\r",
+									"  pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"La respuesta es de tipo 'favorite'\", function () {\r",
+									"    pm.expect(jsonData.data.type).to.eql(\"favorite\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"El favorito es de tipo 'airport'\", function () {\r",
+									"  pm.expect(jsonData.data.attributes).to.have.property(\"airport\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"airport_id\": \"{{airportId}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/favorites",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"favorites"
+							]
+						},
+						"description": "Verificar que la API guarde el aeropuerto favorito en la cuenta."
+					},
+					"response": []
+				},
+				{
+					"name": "Editar favorito",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let jsonData = pm.response.json();\r",
+									"let note = pm.collectionVariables.get(\"updatedNote\");\r",
+									"\r",
+									"pm.test(\"Código de estado 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Se modificó 'note'\", function() {\r",
+									"  pm.expect(jsonData.data.attributes.note).to.not.be.null;\r",
+									"  pm.expect(jsonData.data.attributes.note).to.eql(note);\r",
+									"});\r",
+									"\r",
+									"console.log(\"Valor actualizado de 'note':\", note);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let oldNote = pm.environment.get(\"currentNote\");\r",
+									"console.log(\"Valor previo de note:\", oldNote);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"note\": \"{{updatedNote}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/favorites/{{favId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"favorites",
+								"{{favId}}"
+							]
+						},
+						"description": "Verificar que la API permita actualizar la nota de uno de los aeropuertos guardados en favoritos."
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener favoritos",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let jsonData = pm.response.json();\r",
+									"let favId = pm.collectionVariables.get(\"favId\");\r",
+									"\r",
+									"pm.test(\"Código de estado 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"La lista de favoritos no está vacía\", function() {\r",
+									"  pm.expect(jsonData.data).to.be.an(\"array\").that.is.not.empty;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"La respuesta contiene el aeropuerto agregado en favoritos\", function () {\r",
+									"  let ids = jsonData.data.map(item => item.id);\r",
+									"  pm.expect(ids).to.include(favId);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/favorites",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"favorites"
+							]
+						},
+						"description": "Verificar que la API devuelva todos los aeropuertos guardados en la cuenta."
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar favorito",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Código de estado 204\", function () {\r",
+									"  pm.response.to.have.status(204);\r",
+									"});\r",
+									"\r",
+									"pm.collectionVariables.set(\"favId\", \"\");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/favorites/{{favId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"favorites",
+								"{{favId}}"
+							]
+						},
+						"description": "Verificar que la API elimina de la cuenta uno de los aeropuertos guardado en favoritos."
+					},
+					"response": []
+				},
+				{
+					"name": "Agregar favorito con aeropuerto inválido",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Código de estado 422\", function () {\r",
+									"  pm.response.to.have.status(422);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Mensaje de error correcto\", function () {\r",
+									"  jsonData.errors.forEach(err => {\r",
+									"    pm.expect(err.status).to.eql(\"422\");\r",
+									"    pm.expect(err.title).to.eql(\"Unable to process request\");\r",
+									"    pm.expect(err.detail).to.eql(\"Airport Please enter a valid airport code\");\r",
+									"  });\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"airport_id\": \"{{invalidAirportId}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/favorites",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"favorites"
+							]
+						},
+						"description": "Verificar que la API devuelve error al intentar guardar un aeropuerto que no existe."
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar todos los favoritos",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Código de estado 204\", function () {\r",
+									"  pm.response.to.have.status(204);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/favorites/clear_all",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"favorites",
+								"clear_all"
+							]
+						},
+						"description": "Verificar que la API elimine de la cuenta todos los aeropuertos guardados en favoritos."
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener favoritos luego de eliminar todos",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Código de estado 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"La lista de favoritos está vacía\", function() {\r",
+									"  pm.expect(jsonData.data).to.be.an(\"array\").that.is.empty;\r",
+									"});\r",
+									"\r",
+									"pm.environment.set(\"token\", \"\");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/favorites",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"favorites"
+							]
+						},
+						"description": "Verificar que la API devuelva un array vacío."
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener favorito sin token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Código de estado 401\", function () {\r",
+									"  pm.response.to.have.status(401);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Mensaje de error correcto\", function () {\r",
+									"  jsonData.errors.forEach(err => {\r",
+									"    pm.expect(err.status).to.eql(\"401\");\r",
+									"    pm.expect(err.title).to.eql(\"Unauthorized\");\r",
+									"    pm.expect(err.detail).to.eql(\"You are not authorized to perform the requested action.\");\r",
+									"  });\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/favorites",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"favorites"
+							]
+						},
+						"description": "Verificar que la API exige autenticación."
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "airportId",
+			"value": "KIX",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			}
+		},
+		{
+			"key": "invalidAirportId",
+			"value": "XXX",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			}
+		},
+		{
+			"key": "airportName",
+			"value": "Kansai International Airport",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			}
+		},
+		{
+			"key": "from",
+			"value": "JFK",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			}
+		},
+		{
+			"key": "to",
+			"value": "NRT",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			}
+		},
+		{
+			"key": "distanceKilometers",
+			"value": "10830.45904490195",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			}
+		},
+		{
+			"key": "favId",
+			"value": "",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			}
+		},
+		{
+			"key": "updatedNote",
+			"value": "Nota actualizada",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			}
+		}
+	]
+}

@@ -1,0 +1,53 @@
+{
+	"id": "15b05f7b-ac42-459c-b960-82cbc6ecbb8e",
+	"name": "AirportGap-QA",
+	"values": [
+		{
+			"key": "baseUrl",
+			"value": "https://airportgap.com/api",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "email",
+			"value": "",
+			"type": "secret",
+			"enabled": true
+		},
+		{
+			"key": "password",
+			"value": "",
+			"type": "secret",
+			"enabled": true
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "secret",
+			"enabled": true
+		},
+		{
+			"key": "invalidEmail",
+			"value": "usuario_invalido@ejemplo.com",
+			"type": "default",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			},
+			"enabled": true
+		},
+		{
+			"key": "invalidPassword",
+			"value": "passwordInvalido",
+			"type": "default",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			},
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2025-09-05T23:23:47.732Z",
+	"_postman_exported_using": "Postman/11.61.6"
+}

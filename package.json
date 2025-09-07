@@ -1,0 +1,11 @@
+{
+  "name": "airportgap-api-testing",
+  "version": "1.0.0",
+  "description": "Pruebas automatizadas de API para Airport Gap usando Postman y Newman",
+  "scripts": {
+    "test": "newman run collections/airportgap_postman.json -e environments/airportgap_env.json -r html,json --reporter-html-export reports/airportgap_report.html --reporter-json-export reports/airportgap_report.json"
+  },
+  "devDependencies": {
+    "newman": "6.2.1"
+  }
+}
