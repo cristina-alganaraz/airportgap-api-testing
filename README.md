@@ -86,7 +86,7 @@ Para generarlo ingresa al link [Generación de token de la Airport Gap API](http
 *Instalar dependencias*
 
 ```bash
-npm install
+npm install --legacy-peer-deps
 ```
 
 *Configurar ambiente*
