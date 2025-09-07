@@ -26,6 +26,7 @@ airportgap-api-testing/
 │ └── (reportes generados por Newman)
 ├── package.json # Dependencias y script de ejecución
 └── README.md # Este archivo
+```
 
 ---
 
@@ -50,18 +51,19 @@ airportgap-api-testing/
 
 ## **Cómo importar y ejecutar las pruebas:**
 
-1. ###**Clonar el repositorio:**
+### 1. **Clonar el repositorio:**
 
 ```bash
-git clone https://github.com/tu-usuario/airportgap-api-testing.git
+git clone https://github.com/cristina-alganaraz/airportgap-api-testing.git
 cd airportgap-api-testing
+```
 
-2. ###**Generar token de autenticación:**
+### 2. **Generar token de autenticación:**
 
 Para acceder a los endpoints que requieren autenticación, es necesario un token de autenticación. 
 Para generarlo ingresa al link [Generación de token de la Airport Gap API](https://airportgap.com/tokens/new).
 
-3. ###**Ejecución**: 
+### 3. **Ejecución**: 
 
 **Desde Postman:**
 
@@ -71,7 +73,7 @@ Para generarlo ingresa al link [Generación de token de la Airport Gap API](http
 
 *Configurar ambiente* 
 
-- Coloca tu email y contraseña en las variables EMAIL y PASSWORD, respectivamente.
+- Coloca tu email y contraseña registrados en Airport Gap en las variables EMAIL y PASSWORD, respectivamente.
 - La variable TOKEN se completará automáticamente al obtenerlo desde el endpoint /tokens.
 
 *Ejecutar colección*  
@@ -85,20 +87,18 @@ Para generarlo ingresa al link [Generación de token de la Airport Gap API](http
 
 ```bash
 npm install
+```
 
 *Configurar ambiente*
 
-- Completar variables <EMAIL> y <PASSWORD> de tu cuenta Airport Gap en el archivo `airportgap_env.json`.
-- La variable <TOKEN> se completará automáticamente al obtenerlo desde el endpoint `/tokens`.
+- Coloca tu email y contraseña registrados en Airport Gap en las variables EMAIL y PASSWORD en el archivo `airportgap_env.json`.
+- La variable TOKEN se completará automáticamente al obtenerlo desde el endpoint `/tokens`.
 
 *Ejecutar colección*
 
 ```bash
-newman run collections/airportgap_postman.json \
--e environments/airportgap_env.example.json \
--r html,json \
---reporter-html-export reports/airportgap_report.html \
---reporter-json-export reports/airportgap_report.json
+npm test
+```
 
 - Abrir `/reports` para visualizar los reportes HTML y JSON.
 
@@ -106,5 +106,5 @@ newman run collections/airportgap_postman.json \
 
 ## **Autora:**
 
-**Cristina Leonor Algañaraz Rosado**
+**Cristina Leonor Algañaraz Rosado**  
 Proyecto para portfolio QA | Automatización de APIs
